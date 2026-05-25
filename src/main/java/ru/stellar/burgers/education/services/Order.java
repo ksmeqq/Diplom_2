@@ -1,4 +1,4 @@
-package ru.stellarburgers.education_services;
+package ru.stellar.burgers.education.services;
 
 import java.util.List;
 

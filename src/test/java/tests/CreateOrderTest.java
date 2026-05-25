@@ -10,8 +10,8 @@ import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.stellarburgers.education_services.Order;
-import ru.stellarburgers.education_services.User;
+import ru.stellar.burgers.education.services.Order;
+import ru.stellar.burgers.education.services.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,13 +26,11 @@ public class CreateOrderTest {
     private List<String> ingredients;
 
     private RegisterApi registerApi;
-    private LoginApi loginApi;
     private OrderApi orderApi;
 
     @Before
     public void setUp() {
         registerApi = new RegisterApi();
-        loginApi = new LoginApi();
         orderApi = new OrderApi();
 
         email = "test-" + System.currentTimeMillis() + "@yandex.ru";
@@ -47,20 +45,17 @@ public class CreateOrderTest {
     @Test
     @DisplayName("Создание заказа с авторизацией и ингредиентами возвращает 200")
     @Description("Авторизованный пользователь может создать заказ с валидными ингредиентами через /api/orders")
-    public void createOrderWithAuthAndIngredients() {
-        Order order = new Order(List.of(ingredients.get(0),
-                ingredients.get(1)));
-        response = orderApi.sendPostRequestToCreateOrder(order,
-                accessToken);
+    public void createOrderWithAuthAndIngredientsTest() {
+        Order order = new Order(List.of(ingredients.get(0), ingredients.get(1)));
+        response = orderApi.sendPostRequestToCreateOrder(order, accessToken);
         orderApi.compareResponseStatusCode(response, HttpStatus.SC_OK);
     }
 
     @Test
     @DisplayName("Создание заказа без авторизации с ингредиентами возвращает 200")
     @Description("Неавторизованный пользователь может создать заказ с валидными ингредиентами через /api/orders")
-    public void createOrderWithoutAuthWithIngredients() {
-        Order order = new Order(List.of(ingredients.get(0),
-                ingredients.get(1)));
+    public void createOrderWithoutAuthWithIngredientsTest() {
+        Order order = new Order(List.of(ingredients.get(0), ingredients.get(1)));
         response = orderApi.sendPostRequestToCreateOrder(order);
         orderApi.compareResponseStatusCode(response, HttpStatus.SC_OK);
     }
@@ -68,23 +63,19 @@ public class CreateOrderTest {
     @Test
     @DisplayName("Создание заказа без ингредиентов возвращает 400")
     @Description("Ошибка 400 при попытке создать заказ с пустым списком ингредиентов")
-    public void createOrderWithoutIngredients() {
+    public void createOrderWithoutIngredientsTest() {
         Order order = new Order(Collections.emptyList());
-        response = orderApi.sendPostRequestToCreateOrder(order,
-                accessToken);
-        orderApi.compareResponseStatusCode(response,
-                HttpStatus.SC_BAD_REQUEST);
+        response = orderApi.sendPostRequestToCreateOrder(order, accessToken);
+        orderApi.compareResponseStatusCodeAndMessage(response, HttpStatus.SC_BAD_REQUEST, "Ingredient ids must be provided");
     }
 
     @Test
     @DisplayName("Создание заказа с неверным хешем ингредиента возвращает 500")
     @Description("Ошибка 500 при попытке создать заказ с несуществующим хэш ингредиента")
-    public void createOrderWithInvalidIngredientHash() {
+    public void createOrderWithInvalidIngredientHashTest() {
         Order order = new Order(List.of("invalid_hash_12345"));
-        response = orderApi.sendPostRequestToCreateOrder(order,
-                accessToken);
-        orderApi.compareResponseStatusCode(response,
-                HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        response = orderApi.sendPostRequestToCreateOrder(order, accessToken);
+        orderApi.compareResponseStatusCode(response, HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 
     @After

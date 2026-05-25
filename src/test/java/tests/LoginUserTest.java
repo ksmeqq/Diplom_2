@@ -9,7 +9,7 @@ import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.stellarburgers.education_services.User;
+import ru.stellar.burgers.education.services.User;
 
 public class LoginUserTest {
     private Response response;
@@ -34,7 +34,7 @@ public class LoginUserTest {
     @Test
     @DisplayName("Вход по email и пароль возвращает 200")
     @Description("Успешный вход пользователя по email и password на ручку /api/auth/login")
-    public void loginUserSuccess() {
+    public void loginUserSuccessTest() {
         user = new User(email, password);
         response = loginApi.sendPostRequestToLoginUser(user);
         loginApi.compareResponseStatusCode(response, HttpStatus.SC_OK);
@@ -43,39 +43,39 @@ public class LoginUserTest {
     @Test
     @DisplayName("Вход с неверным паролем возвращает 401")
     @Description("Ошибка 401 при попытке входа с правильным email, но неверным паролем")
-    public void loginUserWithWrongPassword() {
+    public void loginUserWithWrongPasswordTest() {
         user = new User(email, "wrongPassword");
         response = loginApi.sendPostRequestToLoginUser(user);
-        loginApi.compareResponseStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
+        loginApi.compareResponseStatusCodeAndMessage(response, HttpStatus.SC_UNAUTHORIZED, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Вход с неверным email возвращает 401")
     @Description("Ошибка 401 при попытке входа с несуществующим email")
-    public void loginUserWithWrongEmail() {
+    public void loginUserWithWrongEmailTest() {
         user = new User("wrong-" + email, password);
         response = loginApi.sendPostRequestToLoginUser(user);
-        loginApi.compareResponseStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
+        loginApi.compareResponseStatusCodeAndMessage(response, HttpStatus.SC_UNAUTHORIZED, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Вход без email возвращает 401")
     @Description("Ошибка 401 при попытке входа без поля email")
-    public void loginUserWithoutEmail() {
+    public void loginUserWithoutEmailTest() {
         User loginUser = new User();
         loginUser.setPassword(password);
         response = loginApi.sendPostRequestToLoginUser(loginUser);
-        loginApi.compareResponseStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
+        loginApi.compareResponseStatusCodeAndMessage(response, HttpStatus.SC_UNAUTHORIZED, "email or password are incorrect");
     }
 
     @Test
     @DisplayName("Вход без пароля возвращает 401")
     @Description("Ошибка 401 при попытке входа без поля password")
-    public void loginUserWithoutPassword() {
+    public void loginUserWithoutPasswordTest() {
         User loginUser = new User();
         loginUser.setEmail(email);
         response = loginApi.sendPostRequestToLoginUser(loginUser);
-        loginApi.compareResponseStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
+        loginApi.compareResponseStatusCodeAndMessage(response, HttpStatus.SC_UNAUTHORIZED, "email or password are incorrect");
     }
 
     @After

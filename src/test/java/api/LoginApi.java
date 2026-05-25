@@ -3,9 +3,12 @@ package api;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import ru.stellarburgers.education_services.User;
+import ru.stellar.burgers.education.services.User;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class LoginApi {
+    private Endpoints endpoints = new Endpoints();
     @Step("Отправка запроса на вход")
     public Response sendPostRequestToLoginUser(User user) {
         return RestAssured.given()
@@ -14,7 +17,7 @@ public class LoginApi {
                 .and()
                 .body(user)
                 .when()
-                .post("/api/auth/login");
+                .post(endpoints.LOGIN);
     }
 
     @Step("Проверка кода ответа")
@@ -22,5 +25,11 @@ public class LoginApi {
         response.then().statusCode(expectedCode);
     }
 
-
+    @Step("Проверка кода и сообщения ответа")
+    public void compareResponseStatusCodeAndMessage(Response response, int expectedCode, String expectedMessage) {
+        response.then()
+                .statusCode(expectedCode)
+                .and()
+                .body("message", equalTo(expectedMessage));
+    }
 }

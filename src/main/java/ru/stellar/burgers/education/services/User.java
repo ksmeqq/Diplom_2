@@ -1,4 +1,4 @@
-package ru.stellarburgers.education_services;
+package ru.stellar.burgers.education.services;
 
 public class User {
     private String email;
